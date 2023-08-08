@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload File</title>
+</head>
+<body>
+    <h1>Upload File</h1>
+
+    {% if message == 'File uploaded successfully' %}
+        <script>
+            setTimeout(function() {
+                window.location.href = '/select';
+            }, 3000);
+        </script>
+    {% else %}
+        <script>
+            setTimeout(function() {
+                window.location.href = '/home';
+            }, 3000);
+        </script>
+    {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for msg in messages %}
+                    <p>{{ msg }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>
+

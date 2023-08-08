@@ -1,0 +1,56 @@
+.flash-text {
+    font-weight: bold;
+    font-size: 20px;
+  }
+
+  .homepage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* 如果您希望页面填充整个视口高度 */
+  }
+
+  .content-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30vh; /* 设置容器的高度为视口高度的一半 */
+  }
+  
+  .centered-content {
+    text-align: center;
+    width: 50%; /* 设置内容容器的宽度为父容器的一半 */
+  }
+
+  .centered-text {
+    text-align: center;
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 0px;
+  }
+  
+  .working-mode {
+    text-align: center;
+  }
+  
+  .select-container {
+    margin-bottom: 1em;
+  }
+  
+  .button-container {
+    position: relative;
+  }
+  
+  .button-container button {
+    position: absolute;
+    bottom: -30px;
+    right: 0;
+  }
+  
+  
+
+  
+  
+
+  

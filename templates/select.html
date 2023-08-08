@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABYSSES</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='select.css') }}">
+</head>
+<body>
+  <div class="homepage">
+  <h3 class="centered-text">Create a new Abysses job</h3>
+  <div class="content-container">
+    <div class="centered-content">
+      <p>
+        You can choose to directly test the images using the default parameters to get the labels. Or manually annotate some of the images, again train the model and then test to get the image labels. The annotated labels in retrain task are very important, so please be careful to set the labels. Here we expect you to use the training function again to help us improve the performance of the network after using the test function to change the incorrect label results. Thank you very much for your correction.
+      </p>
+    </div>
+  </div>
+  <form id="abysses-job-form" method="POST" action="{{ url_for('create_job') }}" v-on:submit="submit">
+    <input type="hidden" name="type" v-model="typeValue">
+    <fieldset>
+      <legend>Select working mode</legend>
+      <select id="operation" name="operation" v-model="typeValue">
+        <option value="">Please select a working mode</option>
+        <option value="test">Test</option>
+        <option value="train">Train</option>
+        <option value="augmentation">Image Augmentation</option>
+      </select>
+        <button type="submit" id="testButton" class="btn btn-success pull-right" :disabled="canSubmit || !typeValue || typeValue === 'train' || typeValue === 'augmentation'" v-show="typeValue && typeValue !== 'train' && typeValue !== 'augmentation'">Start Testing</button>
+        <button type="submit" id="trainButton" class="btn btn-success pull-right" :disabled="canSubmit || !typeValue || typeValue === 'test' || typeValue === 'augmentation'" v-show="typeValue && typeValue !== 'test' && typeValue !== 'augmentation'">Start Training</button>
+        <button type="submit" id="augmentationButton" class="btn btn-success pull-right" :disabled="canSubmit || !typeValue || typeValue === 'test' || typeValue === 'train'" v-show="typeValue && typeValue !== 'train' && typeValue !== 'test'">Show augmentation images</button>
+      </div>
+      <div></div>
+      <br>
+    </fieldset>
+  </form>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script type="text/javascript">
+    new Vue({
+      el: '#abysses-job-form',
+      data: {
+        typeValue: '',
+        canSubmit: false
+      },
+      methods: {
+        submit() {
+          this.canSubmit = true;
+        }
+      }
+    });
+  </script>
+    <div id="flash-message" class="flash-message">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <p class="flash-text">{{ messages[0] }}</p>
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <script>
+      const flashMessage = document.getElementById('flash-message');
+      if (flashMessage) {
+        setTimeout(function() {
+          flashMessage.style.display = 'none';
+        }, 2000); 
+      }
+    </script>
+  </div>
+</body>
+</html>
+
+

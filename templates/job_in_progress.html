@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job In Progress</title>
+</head>
+<body>
+    <h1>Job Information</h1>
+    {% if error_message %}
+        <p>Error occurred: {{ error_message }}</p>
+    {% else %}
+        <p id="progress-message">Job in Progress, please wait ... </p>
+    {% endif %}
+    <div class="output-container">
+        <pre>{{ captured_output }}</pre>
+    </div>
+    <a href="{{ url_for('download_results') }}" class="btn btn-primary" id="download-link" style="display: none;">Download Results</a>
+    <div></div>
+    <a href="{{ url_for('label_display') }}" class="btn btn-primary" id="display-link" style="display: none;">Show Results</a>
+
+    <script>
+        function showCompletionMessage() {
+            document.getElementById('progress-message').textContent = 'Job Finish, you can download the results or check the results here by "show results"';
+            document.getElementById('download-link').style.display = 'inline';
+            document.getElementById('display-link').style.display = 'inline';
+        }
+
+        function checkThreadCompletion() {
+            fetch('/check_thread_completion')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.completed) {
+                        showCompletionMessage();
+                    } else {
+                        setTimeout(checkThreadCompletion, 1000);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        window.addEventListener('DOMContentLoaded', checkThreadCompletion);
+        
+    </script>      
+</body>
+</html>
+
+
+
+
+

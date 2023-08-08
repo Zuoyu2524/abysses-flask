@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABYSSES</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body>
+  <div class="homepage">
+    <div class="header">
+      <p class="header-text">ABYSSES</p>
+    </div>
+    <div class="upper-section">
+      <div class="left-area">
+        <h1>
+          Artificial intelligence technology empowers deep sea exploration
+        </h1>
+        <p>
+          ABYSSES is a graphical interface application that uses deep learning
+          neural networks to help users automatically and quickly identify
+          deep-sea images
+        </p>
+      </div>
+      <div class="right-area">
+        <img src="{{ url_for('static', filename='resource/image.jpg') }}" alt="My Image" />
+      </div>
+    </div>
+    <h1 class="start">Get Started to Use</h1>
+    <div class="file-upload">
+      <form id="upload-form" action="{{ url_for('home') }}" method="POST" enctype="multipart/form-data">
+        <div class="file-border">
+          <input type="file" class="file-input" name="file" id="file-input" />
+        </div>
+        <div class="file-upload-button">
+          <button type="submit">Upload</button>
+        </div>
+      </form>      
+    </div>
+    <div class="footer">
+      <div class="contact">
+        <h4>To explore more, you can also read the paper, visit the GitHub</h4>
+        <ul>
+          <li>
+            Link to the paper: <a href="https://github.com/pjsoto/SubstratuM">Click Here</a>
+          </li>
+          <li>
+            Visit the GitHub: <a href="https://github.com/pjsoto/SubstratuM">Click Here</a>
+          </li>
+        </ul>
+      </div>
+      <div class="message">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <script>
+              alert('{{ messages[0] }}');
+            </script>
+          {% endif %}
+        {% endwith %}
+      </div>
+      <div class="copyright">
+        <p>&copy; 2023 Team Abysses. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+
+
+
+
+
+
+

@@ -1,0 +1,1 @@
+ DELETE FROM ficher_dri where ref_driver = 1; 

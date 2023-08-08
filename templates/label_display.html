@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Display your image recognition results</title>
+    <style>
+        .disabled-button {
+            background-color: #f2f2f2;
+            color: #a0a0a0;
+            cursor: not-allowed;
+        }
+
+        .modify-form {
+            display: none;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center the form vertically */
+            margin-top: 20px;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align the form blocks to the left */
+            margin-bottom: 10px; /* Adjust the front distance between the container and the button */
+        }
+
+        .form-block {
+            display: flex;
+            flex-direction: row;
+            align-items: center; /* Center the elements horizontally */
+            margin-bottom: 10px; /* Adjust the front distance between the blocks */
+        }
+
+        .label-text {
+            width: 150px; /* Set a fixed width for the labels to align them properly */
+            text-align: right; /* Align the labels to the right */
+            margin-right: 10px; /* Adjust the front distance between label and input/textarea */
+        }
+
+        .form-block input,
+        .form-block textarea {
+            flex: 1; /* Let the input/textarea take the remaining space */
+            min-width: 200px; /* Set a minimum width for the input/textarea */
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Display your image recognition results</h1>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center;">
+        <div>
+            <img id="imageElement" src="{{ url_for('static', filename=image_paths[0].split('static/')[1]) }}" alt="Image" height="200">
+            <p id="labelElement">Labels obtained from the recognition results : {{ labels[0] }}</p>
+            <p id="currentPathElement">The path to the current image : {{ image_paths[0] }}</p>
+            <p id="currentVoteElement">The MajorityVoting results : {{ votes[0] }}</p>
+            <button id="prevButton" onclick="prevImage()">Previous</button>
+            <button id="nextButton" onclick="nextImage()">Next</button>
+            <button id="modifyButton" onclick="toggleModifyForm()">revision</button>
+
+            <div class="modify-form" id="modifyForm">
+                <div class="form-container">
+                    <div class="form-block">
+                        <label for="modifiedLabel" class="label-text">Modify the label :</label>
+                        <input type="text" id="modifiedLabel" name="modifiedLabel" placeholder="Input the modified label">
+                    </div>
+                    <div class="form-block">
+                        <label for="feedback" class="label-text">Feedback :</label>
+                        <textarea id="feedback" name="feedback" placeholder="Please input your feedback"></textarea>
+                    </div>
+                </div>
+                <button onclick="submitModification()">Submit</button>
+            </div>            
+        </div>
+    </div>
+
+    <script>
+        var currentImage = 0;
+        var imagePaths = {{ image_paths | tojson | safe }};
+        var labels = {{ labels | tojson | safe }};
+        var votes = {{ votes | tojson | safe }};
+
+        function showImage(index) {
+            currentImage = index;
+            var imagePath = imagePaths[index];
+            document.getElementById("imageElement").src = imagePath;
+            document.getElementById("labelElement").textContent = "Labels obtained from the recognition results : " + labels[index];
+            document.getElementById("currentPathElement").textContent = "The path to the current image : " + imagePath;
+            document.getElementById("currentVoteElement").textContent = "The MajorityVoting results : " + votes[index];
+
+
+            var prevButton = document.getElementById("prevButton");
+            var nextButton = document.getElementById("nextButton");
+
+            // Disable "Previous" button if at the first image
+            if (currentImage === 0) {
+                prevButton.disabled = true;
+                prevButton.classList.add("disabled-button"); 
+            } else {
+                prevButton.disabled = false;
+                prevButton.classList.remove("disabled-button"); 
+            }
+
+            // Disable "Next" button if at the last image
+            if (currentImage === imagePaths.length - 1) {
+                nextButton.disabled = true;
+                nextButton.classList.add("disabled-button"); 
+            } else {
+                nextButton.disabled = false;
+                nextButton.classList.remove("disabled-button"); 
+            }
+
+            hideModifyForm();
+        }
+
+        function prevImage() {
+            if (currentImage > 0) {
+                currentImage -= 1;
+                showImage(currentImage);
+            }
+        }
+
+        function nextImage() {
+            if (currentImage < imagePaths.length - 1) {
+                currentImage += 1;
+                showImage(currentImage);
+            }
+        }
+
+        function toggleModifyForm() {
+            var modifyForm = document.getElementById("modifyForm");
+            if (modifyForm.style.display === "none") {
+                modifyForm.style.display = "block";
+            } else {
+                modifyForm.style.display = "none";
+            }
+        }
+
+        function hideModifyForm() {
+            var modifyForm = document.getElementById("modifyForm");
+            modifyForm.style.display = "none";
+        }
+
+        var userModifications = [];
+
+        function submitModification() {
+            var modifiedLabel = document.getElementById("modifiedLabel").value;
+            var feedback = document.getElementById("feedback").value;
+            var imagePath = imagePaths[currentImage];
+
+            // Store the modification data in the array
+            userModifications.push({ modifiedLabel: modifiedLabel, feedback: feedback, imagePath: imagePath });
+
+            // Hide the modification form
+            hideModifyForm();
+
+            // Send the modifications to the server
+            saveModifications();
+        }
+
+        function saveModifications() {
+            // Use Fetch API to send the modification data to the server
+            fetch("/submit_modification", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(userModifications),
+            })
+            .then(function(response) {
+                if (response.ok) {
+                    // Modifications saved successfully
+                    alert("The correction has been saved!");
+                } else {
+                    console.error("Failed to save modifications");
+                }
+            })
+            .catch(function(error) {
+                console.error("Error saving modifications:", error);
+            });
+        }
+        showImage(0);
+        
+    </script>
+</body>
+</html>
+
+
+
